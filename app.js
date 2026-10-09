@@ -187,3 +187,75 @@
       <tr><th>Inner zone</th><td>${fmt(res.innerKm)} km radius (${fmt(res.innerAreaKm2, 0)} km²)</td></tr><tr><th>Outer zone</th><td>${fmt(res.outerKm)} km radius (${fmt(res.outerAreaKm2, 0)} km²)</td></tr></table>
       <h3>Warnings and limits</h3><ul>${res.warnings.map(w => '<li>' + w + '</li>').join('')}</ul><p>Weather, fuel, aircraft type and course changes are not modelled. The area is not a guaranteed or probabilistic location.</p>`;
   }
+  function run() {
+    const res = S.calculate(read());
+    last = res;
+
+    if (!res.ok) {
+      show(res.errors, res.warnings);
+      return; // never show fabricated results
+    }
+
+    show([], res.warnings);
+    render(res);
+  }
+
+  $('form').addEventListener('submit', e => {
+    e.preventDefault();
+    run();
+  });
+
+  $('gridToggle').addEventListener('change', () => {
+    if (last && last.ok) render(last);
+  });
+
+  $('demo').addEventListener('click', () => {
+    write(S.DEMO);
+    run();
+  });
+
+  $('fit').addEventListener('click', () => {
+    if (bounds) map.fitBounds(bounds, { padding: [30, 30] });
+  });
+
+  $('reset').addEventListener('click', () => {
+    ['lat', 'lon', 'minutes', 'speed', 'heading'].forEach(i => {
+      $(i).value = '';
+    });
+
+    $('model').value = 'moderate';
+    $('gridToggle').checked = false;
+    layer.clearLayers();
+
+    if (startMarker) map.removeLayer(startMarker);
+
+    startMarker = null;
+    last = bounds = null;
+    show([], []);
+
+    ['cTime', 'cDist', 'cArea'].forEach(i => {
+      $(i).textContent = '–';
+    });
+
+    $('how').textContent =
+      'Enter details (or load the demo) and press Calculate.';
+    $('print').innerHTML = '';
+    map.setView([20.5, 78.9], 5);
+  });
+
+  const lg = L.control({ position: 'bottomleft' });
+
+  lg.onAdd = () => {
+    const d = L.DomUtil.create('div', 'legend');
+    d.innerHTML =
+      '<i style="background:#22c55e;color:#22c55e"></i>Last known position<br>' +
+      '<i style="background:#3b82f6;color:#3b82f6"></i>Estimated central position<br>' +
+      '<i style="background:#ef4444;color:#ef4444"></i>Inner uncertainty zone<br>' +
+      '<i style="background:#f59e0b;color:#f59e0b"></i>Outer uncertainty zone<br>' +
+      '<i style="background:#7cc4ff;color:#7cc4ff"></i>Estimated path (dashed)<br>' +
+      'Grid: red High · amber Medium · green Low (demo)';
+    return d;
+  };
+
+  lg.addTo(map);
+})();
