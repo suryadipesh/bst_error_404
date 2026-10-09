@@ -124,3 +124,24 @@ t('very long distance works and warns', () => {
   assert.ok(r.warnings.some(w => /Very long distance/.test(w)));
   assert.ok(Math.abs(r.center.lon) <= 180 && Math.abs(r.center.lat) <= 90);
 });
+t('grid cells lie inside outer radius and have priorities', () => {
+  const r = S.calculate(base);
+  const g = S.buildGrid(r);
+  assert.ok(g.cells.length > 10);
+  assert.ok(
+    g.cells.every(c =>
+      c.distKm <= r.outerKm &&
+      ['High', 'Medium', 'Low'].includes(c.priority)
+    )
+  );
+  assert.ok(g.cells.some(c => c.priority === 'High'));
+});
+
+t('demo scenario is reproducible', () => {
+  const a = S.calculate(S.DEMO);
+  const b = S.calculate(S.DEMO);
+  assert.deepStrictEqual(a, b);
+  console.log('   demo centre', a.center, 'dist', a.distanceKm, 'outer', a.outerKm);
+});
+
+console.log('\n' + n + ' tests passed');
