@@ -73,3 +73,41 @@
     warnings.push('The model assumes straight flight at a constant speed and heading. Wind, turns, descents and fuel are not known.');
     return { ok: true, errors, warnings };
   }
+  // Main calculation. Returns { ok:false, errors } on failure - never invented numbers.
+  function calculate(input) {
+    const i = {
+      lat: Number(input.lat),
+      lon: Number(input.lon),
+      minutes: Number(input.minutes),
+      speedKmh: Number(input.speedKmh),
+      headingDeg: Number(input.headingDeg),
+      model: input.model || 'moderate'
+    };
+
+    for (const k of ['lat', 'lon', 'minutes', 'speedKmh', 'headingDeg']) {
+      if (input[k] === '' || input[k] == null) i[k] = NaN;
+    }
+
+    const v = validate(i);
+    if (!v.ok) return { ok: false, errors: v.errors, warnings: v.warnings };
+
+    const m = MODELS[i.model];
+    const distanceKm = travelDistanceKm(i.speedKmh, i.minutes);
+    const center = destinationPoint(i.lat, i.lon, i.headingDeg, distanceKm);
+    const outerKm = Math.max(m.floorKm, m.spread * distanceKm);
+    const innerKm = outerKm * m.innerRatio;
+
+    return {
+      ok: true,
+      errors: [],
+      warnings: v.warnings,
+      input: i,
+      model: m,
+      distanceKm,
+      center,
+      outerKm,
+      innerKm,
+      outerAreaKm2: Math.PI * outerKm ** 2,
+      innerAreaKm2: Math.PI * innerKm ** 2
+    };
+  }
