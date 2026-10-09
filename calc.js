@@ -29,3 +29,47 @@
     const h = Math.sin(dp / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dl / 2) ** 2;
     return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
   }
+  // Returns { ok, errors[], warnings[] }. Never guesses: invalid input => ok:false.
+  function validate(i) {
+    const errors = [], warnings = [];
+    const num = (v, name) => {
+      if (v === '' || v === null || v === undefined || !Number.isFinite(Number(v))) {
+        errors.push(name + ' must be a number.');
+        return false;
+      }
+      return true;
+    };
+
+    const okLat = num(i.lat, 'Latitude');
+    const okLon = num(i.lon, 'Longitude');
+    const okT = num(i.minutes, 'Time since last contact');
+    const okS = num(i.speedKmh, 'Speed');
+    const okH = num(i.headingDeg, 'Heading');
+
+    if (okLat && (i.lat < -90 || i.lat > 90)) errors.push('Latitude must be between -90 and 90.');
+    if (okLon && (i.lon < -180 || i.lon > 180)) errors.push('Longitude must be between -180 and 180.');
+    if (okT && i.minutes < 0) errors.push('Time since last contact cannot be negative.');
+    if (okS && i.speedKmh < 0) errors.push('Speed cannot be negative.');
+    if (okH && (i.headingDeg < 0 || i.headingDeg > 359)) errors.push('Heading must be between 0 and 359 degrees.');
+    if (!MODELS[i.model]) errors.push('Choose Narrow, Moderate or Wide uncertainty.');
+
+    if (errors.length) return { ok: false, errors, warnings };
+
+    const dist = travelDistanceKm(i.speedKmh, i.minutes);
+
+    if (i.minutes === 0) warnings.push('Zero elapsed time: the estimate is the last known position and the area is only the minimum model radius.');
+    if (i.speedKmh === 0 && i.minutes > 0) warnings.push('Speed is 0 km/h, so the aircraft is assumed not to have moved. Check this is realistic.');
+    if (i.speedKmh > 1100) warnings.push('Speed above 1,100 km/h is faster than most aircraft; the model may not apply.');
+    if (i.speedKmh > 0 && i.speedKmh < 60) warnings.push('Speed below 60 km/h is unusually slow for fixed-wing aircraft.');
+    if (i.minutes > 480) warnings.push('More than 8 hours since contact: a real aircraft may have run out of fuel or changed course. Treat this area as very rough.');
+    if (dist > 3000) warnings.push('Very long distance (' + Math.round(dist) + ' km): the straight-line, constant-heading assumption becomes unreliable.');
+    if (Math.abs(i.lat) > 80) warnings.push('Near the poles, headings and map distortion make this estimate less reliable.');
+
+    const end = destinationPoint(i.lat, i.lon, i.headingDeg, dist);
+    if (Math.abs(end.lon - i.lon) > 180 || Math.abs(Math.abs(i.lon) - 180) < 1 || (Math.abs(end.lon - i.lon) > 90 && dist > 8000)) {
+      warnings.push('The path may cross the 180° longitude line; the map may draw it unexpectedly.');
+    }
+
+    warnings.push('The model assumes straight flight at a constant speed and heading. Wind, turns, descents and fuel are not known.');
+    return { ok: true, errors, warnings };
+  }
