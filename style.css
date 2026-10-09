@@ -1,0 +1,94 @@
+:root {
+  --bg: #08111b;
+  --panel: #101d2b;
+  --line: #26394b;
+  --text: #e7f0f7;
+  --muted: #9bb0c2;
+  --cyan: #55d6e8;
+  --amber: #f3b84b;
+  --red: #ef6b6b;
+  --green: #62d394;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--line);
+  background: #0c1723;
+}
+
+h1,
+h2 {
+  margin: 0;
+  font-family: "Chakra Petch", sans-serif;
+}
+
+h1 {
+  color: var(--cyan);
+  letter-spacing: 1px;
+}
+
+.brand p {
+  margin: 2px 0 0;
+  color: var(--muted);
+}
+
+.badge {
+  margin-left: auto;
+  color: var(--amber);
+  font-size: 0.85rem;
+}
+
+.radar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--cyan);
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle,
+    transparent 0 7px,
+    #55d6e833 8px 9px
+  );
+}
+
+.radar i {
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 300deg,
+    #55d6e899 360deg
+  );
+  animation: sweep 3s linear infinite;
+}
+
+.radar b {
+  position: absolute;
+  top: 17px;
+  left: 17px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--cyan);
+}
+
+@keyframes sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
