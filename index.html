@@ -21,3 +21,56 @@
   </div>
   <span class="badge">Educational prototype · not a certified search-and-rescue system</span>
 </header>
+<main>
+  <aside id="panel">
+    <form id="form" novalidate>
+      <h2>Last contact details</h2>
+
+      <label>Last known latitude
+        <input id="lat" type="number" step="any" placeholder="e.g. 13.1986">
+      </label>
+
+      <label>Last known longitude
+        <input id="lon" type="number" step="any" placeholder="e.g. 77.7066">
+      </label>
+
+      <p class="hint">Or click anywhere on the map to set the last known position.</p>
+
+      <label>Time since last contact (minutes)
+        <input id="minutes" type="number" step="any" min="0">
+      </label>
+
+      <label>Aircraft speed (km/h)
+        <input id="speed" type="number" step="any" min="0">
+      </label>
+
+      <label>Heading (0–359°)
+        <input id="heading" type="number" step="any" min="0" max="359">
+        <small>0 = north, 90 = east, 180 = south, 270 = west</small>
+      </label>
+
+      <label>Uncertainty setting
+        <select id="model">
+          <option value="narrow">Narrow</option>
+          <option value="moderate" selected>Moderate</option>
+          <option value="wide">Wide</option>
+        </select>
+        <small>An illustrative modelling assumption about how widely the area spreads – not a measured confidence level.</small>
+      </label>
+
+      <label class="chk">
+        <input id="gridToggle" type="checkbox">
+        Show search grid with demo priorities
+      </label>
+
+      <div id="messages" role="alert"></div>
+
+      <div class="btns">
+        <button type="submit" class="primary">Calculate Search Area</button>
+        <button type="button" id="demo" class="demo">Load Demo Scenario</button>
+        <button type="button" id="reset">Reset</button>
+      </div>
+    </form>
+
+    <p class="note"><b>How good is this?</b> These four inputs give only an <i>initial estimate</i>. Weather (wind), fuel, aircraft type and any change of course are unknown, which adds uncertainty. The result is not a guaranteed location or probability.</p>
+  </aside>
