@@ -143,3 +143,30 @@
 
     return { cellKm: cell, cells };
   }
+  const DEMO = {
+    lat: 13.1986,
+    lon: 77.7066,
+    minutes: 45,
+    speedKmh: 240,
+    headingDeg: 135,
+    model: 'moderate'
+  }; // near Bengaluru airport, heading SE
+
+  const api = {
+    R,
+    MODELS,
+    DEMO,
+    travelDistanceKm,
+    destinationPoint,
+    haversineKm,
+    validate,
+    calculate,
+    buildGrid
+  };
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = api;
+  } else {
+    root.SkyTrace = api;
+  }
+})(typeof window !== 'undefined' ? window : globalThis);
