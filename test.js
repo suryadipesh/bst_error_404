@@ -57,3 +57,70 @@ t('west: longitude falls', () => {
   const r = S.calculate({ ...base, headingDeg: 270 });
   assert.ok(r.center.lon < 20);
 });
+t('great-circle distance matches travel distance', () => {
+  for (const h of [0, 45, 90, 135, 200, 315]) {
+    const r = S.calculate({
+      ...base,
+      headingDeg: h,
+      speedKmh: 800,
+      minutes: 120
+    });
+    near(
+      S.haversineKm({ lat: 10, lon: 20 }, r.center),
+      1600,
+      0.01,
+      'heading ' + h
+    );
+  }
+});
+
+t('more speed or time -> farther', () => {
+  const a = S.calculate(base);
+  const b = S.calculate({ ...base, speedKmh: 400 });
+  const c = S.calculate({ ...base, minutes: 120 });
+  assert.ok(b.distanceKm > a.distanceKm && c.distanceKm > a.distanceKm);
+});
+
+t('uncertainty ordering narrow < moderate < wide', () => {
+  const [a, b, c] = ['narrow', 'moderate', 'wide'].map(m =>
+    S.calculate({ ...base, minutes: 120, model: m }).outerKm
+  );
+  assert.ok(a < b && b < c);
+});
+
+t('inner zone smaller than outer', () => {
+  const r = S.calculate(base);
+  assert.ok(r.innerKm < r.outerKm && r.innerAreaKm2 < r.outerAreaKm2);
+});
+
+t('invalid coordinates rejected', () => {
+  for (const bad of [
+    { lat: 91 },
+    { lat: -91 },
+    { lon: 181 },
+    { lon: -181 },
+    { lat: 'abc' },
+    { lat: '' }
+  ]) {
+    const r = S.calculate({ ...base, ...bad });
+    assert.strictEqual(r.ok, false);
+    assert.strictEqual(r.center, undefined);
+  }
+});
+
+t('negative speed/time rejected', () => {
+  assert.strictEqual(S.calculate({ ...base, speedKmh: -5 }).ok, false);
+  assert.strictEqual(S.calculate({ ...base, minutes: -1 }).ok, false);
+});
+
+t('heading out of range rejected', () => {
+  assert.strictEqual(S.calculate({ ...base, headingDeg: 360 }).ok, false);
+  assert.strictEqual(S.calculate({ ...base, headingDeg: -1 }).ok, false);
+});
+
+t('very long distance works and warns', () => {
+  const r = S.calculate({ ...base, speedKmh: 900, minutes: 600 });
+  assert.ok(r.ok);
+  assert.ok(r.warnings.some(w => /Very long distance/.test(w)));
+  assert.ok(Math.abs(r.center.lon) <= 180 && Math.abs(r.center.lat) <= 90);
+});
