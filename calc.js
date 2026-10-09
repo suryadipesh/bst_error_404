@@ -111,3 +111,35 @@
       innerAreaKm2: Math.PI * innerKm ** 2
     };
   }
+  // Search grid: ~8 cells across; keep cells whose centre lies inside the outer circle.
+  // Priority (demonstration only): High <= 50% of outer radius, Medium <= 80%, otherwise Low.
+  function buildGrid(res, cellsAcross) {
+    const n = cellsAcross || 8;
+    const cell = (2 * res.outerKm) / n;
+    const c = res.center;
+    const dLat = cell / 111.195;
+    const dLon = cell / (111.195 * Math.max(0.01, Math.cos(rad(c.lat))));
+    const cells = [];
+
+    for (let r = 0; r < n; r++) {
+      for (let q = 0; q < n; q++) {
+        const lat = c.lat + (r - (n - 1) / 2) * dLat;
+        const lon = c.lon + (q - (n - 1) / 2) * dLon;
+        const dist = haversineKm(c, { lat, lon });
+
+        if (dist > res.outerKm) continue;
+
+        const f = dist / res.outerKm;
+        cells.push({
+          bounds: [
+            [lat - dLat / 2, lon - dLon / 2],
+            [lat + dLat / 2, lon + dLon / 2]
+          ],
+          distKm: dist,
+          priority: f <= 0.5 ? 'High' : f <= 0.8 ? 'Medium' : 'Low'
+        });
+      }
+    }
+
+    return { cellKm: cell, cells };
+  }
