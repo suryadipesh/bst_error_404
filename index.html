@@ -74,3 +74,26 @@
 
     <p class="note"><b>How good is this?</b> These four inputs give only an <i>initial estimate</i>. Weather (wind), fuel, aircraft type and any change of course are unknown, which adds uncertainty. The result is not a guaranteed location or probability.</p>
   </aside>
+    <section id="right">
+    <div id="cards">
+      <div class="card"><span>Time since contact</span><b id="cTime">–</b></div>
+      <div class="card"><span>Estimated travel distance</span><b id="cDist">–</b></div>
+      <div class="card"><span>Outer search area</span><b id="cArea">–</b></div>
+    </div>
+
+    <div id="mapwrap">
+      <div id="map"></div>
+      <button id="fit" type="button">Fit map to search area</button>
+    </div>
+
+    <div id="explain" class="note">
+      <b>How the result was calculated</b>
+      <p id="how">Enter details (or load the demo) and press Calculate.</p>
+    </div>
+
+    <div id="grid-note" class="note" hidden>
+      <b>Search grid:</b> priorities (High / Medium / Low) only reflect distance from the central estimate under the chosen uncertainty setting. They are demonstration labels, not validated rescue probabilities.
+      <button type="button" onclick="window.print()">Print incident summary</button>
+    </div>
+  </section>
+</main>
