@@ -35,6 +35,10 @@ Keep all five project files in the same folder:
 
 Open `index.html` in a web browser. An internet connection is needed to load the online map and map images.
 
+## Try the live prototype
+
+[Open SkyTrace](https://suryadipesh.github.io/bst_error_404/)
+
 ## How to run the tests
 
 If Node.js is installed, open a terminal in the project folder and enter:
