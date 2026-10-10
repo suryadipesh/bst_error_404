@@ -41,3 +41,12 @@ If Node.js is installed, open a terminal in the project folder and enter:
 
 ```bash
 node test.js
+
+## Features not included yet
+
+- SkyTrace does not track real aircraft or use live flight information.
+- It does not include live weather, wind, fuel, or aircraft details.
+- The estimate assumes the aircraft kept flying at the same speed and heading.
+- The map grid’s High, Medium, and Low labels are examples. They are not real rescue probabilities.
+
+SkyTrace is for learning and classroom demonstration only. Real search-and-rescue teams should use official information and tools.
