@@ -10,10 +10,10 @@ This is a classroom project. It is **not** a certified search-and-rescue system.
 
 ## Team members
 
-- 2392608116 Suryasarthi Sahoo
-- 2392608010 Avinash Kumar
-- 2392608113 Suman Shekhar
-- 2392608062 Aaravdeep Singh Dhillon
+- Suryasarthi Sahoo — USN: 2392608116 — [GitHub profile](https://github.com/suryadipesh)
+- Avinash Kumar — USN: 2392608010 — [GitHub profile](https://github.com/avinashgupta5729-prog)
+- Suman Shekhar — USN: 2392608113 — [GitHub profile](https://github.com/shekharsuman4818-cpu)
+- Aaravdeep Singh Dhillon — USN: 2392608062 — [GitHub profile](https://github.com/aaravdeep2008-hue)
 
 ## What we built and why
 
