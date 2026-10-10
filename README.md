@@ -23,3 +23,21 @@ The app estimates a possible location and shows an illustrative search area on a
 
 We built it to learn how a website can collect information, do simple calculations, and show results on a map.
 
+## How to run SkyTrace
+
+Keep all five project files in the same folder:
+
+- `index.html`
+- `style.css`
+- `calc.js`
+- `app.js`
+- `test.js`
+
+Open `index.html` in a web browser. An internet connection is needed to load the online map and map images.
+
+## How to run the tests
+
+If Node.js is installed, open a terminal in the project folder and enter:
+
+```bash
+node test.js
